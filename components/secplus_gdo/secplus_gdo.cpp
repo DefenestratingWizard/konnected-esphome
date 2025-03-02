@@ -117,10 +117,12 @@ namespace secplus_gdo {
 
     void GDOComponent::setup() {
         // Set the toggle only state and control here because we cannot guarantee the cover instance was created before the switch
+        ESP_LOGD(TAG, "begin setup");
         this->door_->set_toggle_only(this->toggle_only_switch_->state);
+        ESP_LOGD(TAG, "1");
         this->toggle_only_switch_->set_control_function(std::bind(&esphome::secplus_gdo::GDODoor::set_toggle_only,
                                                         this->door_, std::placeholders::_1));
-
+        ESP_LOGD(TAG, "2");
         gdo_config_t gdo_conf = {
             .uart_num = UART_NUM_1,
             .obst_from_status = true,
@@ -129,10 +131,12 @@ namespace secplus_gdo {
             .uart_rx_pin = (gpio_num_t)GDO_UART_RX_PIN,
             .obst_in_pin = (gpio_num_t)-1,
         };
-
+        ESP_LOGD(TAG,"gdo init");
         gdo_init(&gdo_conf);
+        ESP_LOGD(TAG,"gdo get status");
         gdo_get_status(&this->status_);
         if (this->start_gdo_) {
+            ESP_LOGD(TAG,"gdo_start");
             gdo_start(gdo_event_handler, this);
             ESP_LOGI(TAG, "secplus GDO started!");
         } else {
